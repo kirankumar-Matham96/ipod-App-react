@@ -1,0 +1,10 @@
+.item-component-container {
+  height: 100%;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.default-container {
+  background-color: transparent;
+}

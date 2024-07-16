@@ -1,13 +1,14 @@
 import { ButtonComponent } from "../Button";
 import wheelStyles from "./index.module.css";
 
-export const ControlWheel = () => {
+export const ControlWheel = (props) => {
   return (
     <div id="wheel" className={wheelStyles["wheel-container"]}>
-      <ButtonComponent text={"Menu"} />
+      <ButtonComponent onClick={props.handleMenuClick} text={"Menu"} />
       <div className={wheelStyles["mid-buttons-container"]}>
         <ButtonComponent text={<i className="fa-solid fa-backward-fast"></i>} />
         <ButtonComponent
+          onClick={props.handleSelectClick}
           color={"rgb(230, 230, 230)"}
           radius={"20rem"}
           width={"4rem"}
