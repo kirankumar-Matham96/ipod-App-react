@@ -3,7 +3,7 @@ import wheelStyles from "./index.module.css";
 
 export const ControlWheel = () => {
   return (
-    <div className={wheelStyles["wheel-container"]}>
+    <div id="wheel" className={wheelStyles["wheel-container"]}>
       <ButtonComponent text={"Menu"} />
       <div className={wheelStyles["mid-buttons-container"]}>
         <ButtonComponent text={<i className="fa-solid fa-backward-fast"></i>} />

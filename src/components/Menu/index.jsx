@@ -9,7 +9,11 @@ export const Menu = (props) => {
           <h4>iPod.js</h4>
         </div>
         {props.menu.map((item) => (
-          <MenuItem key={item.id} text={item.content} />
+          <MenuItem
+            key={item.id}
+            text={item.content}
+            isSelected={item.isSelected}
+          />
         ))}
       </div>
     </div>
