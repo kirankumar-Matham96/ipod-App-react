@@ -7,4 +7,20 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
+}
+.menu {
+  width: 50%;
+  height: 90%;
+  padding: 2rem 0.5rem 0 0.5rem;
+  background-color: #fff;
+}
+.menu-heading {
+  font-size: 1.7rem;
+  font-weight: 600;
+  padding: 0.5rem;
+}
+.menu-heading > h4 {
+  margin: 0;
+  padding: 0;
 }
