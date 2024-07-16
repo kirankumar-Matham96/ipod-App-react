@@ -1,0 +1,10 @@
+.menu-container {
+  width: 100%;
+  height: 21rem;
+  border-radius: 0.5rem;
+  border: 3px solid #1d1d1d;
+  background-image: url("https://i.pinimg.com/originals/3b/47/68/3b47686a6dbf0983f77ac10928b85d41.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
