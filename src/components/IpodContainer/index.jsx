@@ -5,6 +5,7 @@ import ipodStyles from "./index.module.css";
 import ZingTouch from "zingtouch";
 
 const zt = new ZingTouch.Region(document.body);
+
 export default class IpodContainer extends Component {
   constructor() {
     super();
@@ -15,9 +16,56 @@ export default class IpodContainer extends Component {
           id: 2,
           content: "Music",
           subMenu: [
-            { id: 1, content: "All Songs", isSelected: false },
-            { id: 2, content: "Artists", isSelected: false },
-            { id: 3, content: "Albums", isSelected: false },
+            {
+              id: 1,
+              content: "All Songs",
+              isSelected: false,
+              song: {
+                id: 1,
+                title: "A Small Miracle",
+                artist: "Romarecord1973",
+                album: "Anonymous",
+                filePath: "assets/a-small-miracle-132333.mp3",
+              },
+            },
+            {
+              id: 2,
+              content: "Artists",
+              isSelected: false,
+              artists: [
+                {
+                  id: 1,
+                  name: "Romarecord1973",
+                },
+                {
+                  id: 2,
+                  name: "Olexy",
+                },
+                {
+                  id: 3,
+                  name: "Lesfm",
+                },
+                {
+                  id: 4,
+                  name: "Music_For_Videos",
+                },
+                {
+                  id: 5,
+                  name: "lvymusic",
+                },
+              ],
+            },
+            {
+              id: 3,
+              content: "Albums",
+              isSelected: false,
+              albums: [
+                {
+                  id: 1,
+                  name: "Unknown",
+                },
+              ],
+            },
           ],
         },
         { id: 3, content: "Games", isSelected: false },
@@ -35,71 +83,39 @@ export default class IpodContainer extends Component {
     if (parseInt(Math.abs(e.detail.angle) % 15) === 0) {
       if (e.detail.distanceFromLast >= 0) {
         if (isSubMenu) {
-          this.setState(
-            {
-              menu: newMenu,
-              subMenuCounter:
-                this.state.subMenuCounter >= newSubMenu.length - 1
-                  ? 0
-                  : this.state.subMenuCounter + 1,
-            },
-            () => {
-              console.log(
-                "subMenuCounter after state update => ",
-                this.state.subMenuCounter
-              );
-            }
-          );
+          this.setState({
+            menu: newMenu,
+            subMenuCounter:
+              this.state.subMenuCounter >= newSubMenu.length - 1
+                ? 0
+                : this.state.subMenuCounter + 1,
+          });
         } else {
-          this.setState(
-            {
-              menu: newMenu,
-              menuCounter:
-                this.state.menuCounter >= newMenu.length - 1
-                  ? 0
-                  : this.state.menuCounter + 1,
-            },
-            () => {
-              console.log(
-                "MenuCounter after state update => ",
-                this.state.menuCounter
-              );
-            }
-          );
+          this.setState({
+            menu: newMenu,
+            menuCounter:
+              this.state.menuCounter >= newMenu.length - 1
+                ? 0
+                : this.state.menuCounter + 1,
+          });
         }
       } else {
         if (isSubMenu) {
-          this.setState(
-            {
-              menu: newMenu,
-              subMenuCounter:
-                this.state.subMenuCounter <= 0
-                  ? newSubMenu.length - 1
-                  : this.state.subMenuCounter - 1,
-            },
-            () => {
-              console.log(
-                "subMenuCounter after state update => ",
-                this.state.subMenuCounter
-              );
-            }
-          );
+          this.setState({
+            menu: newMenu,
+            subMenuCounter:
+              this.state.subMenuCounter <= 0
+                ? newSubMenu.length - 1
+                : this.state.subMenuCounter - 1,
+          });
         } else {
-          this.setState(
-            {
-              menu: newMenu,
-              menuCounter:
-                this.state.menuCounter <= 0
-                  ? newMenu.length - 1
-                  : this.state.menuCounter - 1,
-            },
-            () => {
-              console.log(
-                "MenuCounter after state update => ",
-                this.state.menuCounter
-              );
-            }
-          );
+          this.setState({
+            menu: newMenu,
+            menuCounter:
+              this.state.menuCounter <= 0
+                ? newMenu.length - 1
+                : this.state.menuCounter - 1,
+          });
         }
       }
     }
@@ -114,8 +130,6 @@ export default class IpodContainer extends Component {
       let newSubMenu = newSelectedItem.subMenu;
 
       newSubMenu = newSubMenu.map((item, index) => {
-        console.log("index => ", index);
-        console.log("subMenuCounter => ", this.state.subMenuCounter);
         // changing counter here
         return index === this.state.subMenuCounter
           ? { ...item, isSelected: true }
@@ -201,6 +215,7 @@ export default class IpodContainer extends Component {
           showMenu={this.state.showMenu}
           showItemComponent={this.state.showItemComponent}
           showSubMenu={this.state.showSubMenu}
+          subMenuCounter={this.state.subMenuCounter}
         />
         <ControlWheel
           handleMenuClick={this.handleMenuClick}

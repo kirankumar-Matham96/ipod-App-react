@@ -2,9 +2,34 @@
   height: 100%;
   background-color: #fff;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  /* border: 2px solid red; */
+}
+.item-component-container span {
+  font-size: 4rem;
+}
+
+.item-component-container p {
+  font-size: 1.5rem;
 }
 .default-container {
   background-color: transparent;
+}
+.item-component-text-container {
+  display: flex;
+  /* text-align: center; */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+}
+.item-component-text-container > span {
+  font-size: 12px;
+}
+#seek-bar {
+  width: 82%;
+  margin: 0;
+  padding: 0;
 }

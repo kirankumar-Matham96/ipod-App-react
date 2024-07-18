@@ -1,6 +1,6 @@
 import { MenuItem } from "../MenuItem";
 import menuStyles from "./index.module.css";
-import { ItemComponent } from "../ItemComponent";
+import ItemComponent from "../ItemComponent";
 
 export const Menu = (props) => {
   const selectedItem = props.menu.find((item) => item.isSelected);
@@ -41,7 +41,10 @@ export const Menu = (props) => {
 
       {props.showItemComponent && (
         <>
-          <ItemComponent selectedItem={selectedItem ? selectedItem : null} />
+          <ItemComponent
+            selectedItem={selectedItem ? selectedItem : null}
+            subMenuCounter={props.subMenuCounter}
+          />
         </>
       )}
     </div>

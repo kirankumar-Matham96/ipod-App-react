@@ -9,7 +9,7 @@ export const ControlWheel = (props) => {
         <ButtonComponent text={<i className="fa-solid fa-backward-fast"></i>} />
         <ButtonComponent
           onClick={props.handleSelectClick}
-          color={"rgb(230, 230, 230)"}
+          bg={"rgb(230, 230, 230)"}
           radius={"20rem"}
           width={"4rem"}
           height={"4rem"}
