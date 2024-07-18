@@ -7,6 +7,7 @@ A simple IPOD simulator created with react, where you can interact with the UI. 
 - [Features](#backend-features)
 - [Installation](#installation)
 - [Technologies Used](#technologies-used)
+- [Known Issues & Improvements](#known-issues-&-improvements)
 - [Contributing](#contributing)
 - [License](#license)
 
