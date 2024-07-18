@@ -1,7 +1,5 @@
 # IPod Simulator
 
-# Polling System App (NODE-Repository-REST-API)
-
 An Open API represents a polling system. You can add any question and option to the question. Also can vote the option.
 
 ## Table of Contents
