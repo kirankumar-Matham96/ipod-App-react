@@ -1,6 +1,11 @@
 import { ButtonComponent } from "../Button";
 import wheelStyles from "./index.module.css";
 
+/**
+ * Component that will control all operations in the ipod
+ * @param {Object} props props from parent(IpodContainer)  
+ * @returns JSX - Wheel component 
+ */
 export const ControlWheel = (props) => {
   return (
     <div id="wheel" className={wheelStyles["wheel-container"]}>

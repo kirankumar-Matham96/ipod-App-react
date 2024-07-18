@@ -1,7 +1,15 @@
 import React, { Component } from "react";
 import itemComponentStyles from "./index.module.css";
 
+/**
+ * Component to render the main screen in the ipod based on conditions.
+ * Since it manges the changes, class component is used.
+ */
 export default class ItemComponent extends Component {
+  /**
+   * Lifecycle method called after the component is mounted into the DOM.
+   * Adds event listeners to the audio element for time updates, metadata loading, and audio end.
+   */
   componentDidMount = () => {
     const { updateTime, handleLoadedMetadata, handleEnded, audioRef } =
       this.props;
@@ -11,6 +19,10 @@ export default class ItemComponent extends Component {
     audio?.addEventListener("ended", handleEnded);
   };
 
+  /**
+   * Lifecycle method called before the component is unmounted from the DOM.
+   * Removes event listeners from the audio element for time updates, metadata loading, and audio end.
+   */
   componentWillUnmount = () => {
     const { updateTime, handleLoadedMetadata, handleEnded, audioRef } =
       this.props;
@@ -19,6 +31,7 @@ export default class ItemComponent extends Component {
     audio?.removeEventListener("loadedmetadata", handleLoadedMetadata);
     audio?.removeEventListener("ended", handleEnded);
   };
+
   render() {
     const {
       selectedItem,

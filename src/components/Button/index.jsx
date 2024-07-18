@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-
+/**
+ * Simple styled button component to render reusable button
+ */
 const Button = styled.button`
   border: none;
   background: ${(props) => (props.bg ? props.bg : "none")};

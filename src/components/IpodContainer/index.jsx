@@ -6,6 +6,9 @@ import ZingTouch from "zingtouch";
 
 const zt = new ZingTouch.Region(document.body);
 
+/**
+ * Class component to manage state of the ipod
+ */
 export default class IpodContainer extends Component {
   constructor() {
     super();
@@ -84,14 +87,23 @@ export default class IpodContainer extends Component {
     this.audioRef = React.createRef();
   }
 
-  // Format time function (minutes:seconds)
+  /**
+   * Formats the given time in seconds to a string in the format "minutes:seconds".
+   * If the seconds value is less than 10, it prepends a "0" for a consistent display.
+   * @param {number} time - The time in seconds to format.
+   * @returns {string} - The formatted time string.
+   */
   formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  // Play/Pause toggle function
+  /**
+   * Toggles the play/pause state of the audio element.
+   * If the audio is currently playing, it pauses it and updates the button text to "Play".
+   * If the audio is currently paused, it plays it and updates the button text to "Pause".
+   */
   togglePlayPause = () => {
     const audio = this.audioRef.current;
     if (this.state.isPlaying) {
@@ -102,7 +114,10 @@ export default class IpodContainer extends Component {
     this.setState({ isPlaying: !this.state.isPlaying });
   };
 
-  // Update current time and seek bar value
+  /**
+   * Updates the current time and seek bar value of the audio element.
+   * This function is called during the audio's time update events.
+   */
   updateTime = () => {
     const audio = this.audioRef.current;
     this.setState({
@@ -111,22 +126,31 @@ export default class IpodContainer extends Component {
     });
   };
 
-  // Update duration once loaded metadata
+  /**
+   * Updates the duration state once the audio metadata is loaded.
+   * This function is called when the audio's metadata (including duration) is loaded.
+   */
   handleLoadedMetadata = () => {
     const audio = this.audioRef.current;
     this.setState({ duration: audio.duration });
   };
 
-  // Seek bar change handler
+  /**
+   * Handles changes to the seek bar, updating the audio's current time accordingly.
+   * This function is called when the seek bar value changes (e.g., when the user drags the seek bar).
+   * @param {object} e - The event object from the input change event.
+   */
   handleSeekBarChange = (e) => {
     const newValue = e.target.value;
     this.audioRef.current.currentTime = newValue;
     this.setState({ seekBarValue: newValue });
   };
 
-  // forward song
+  /**
+   * Advances the audio by one second, updating the state and the audio's current time.
+   * This function is called when the forward button is clicked.
+   */
   handleForward = () => {
-    // state update
     this.setState(
       {
         seekBarValue:
@@ -141,16 +165,19 @@ export default class IpodContainer extends Component {
             : this.state.duration,
       },
       () => {
-        // audio element update
         const audio = this.audioRef.current;
-        audio.currentTime = this.state.currentTime;
+        if (audio) {
+          audio.currentTime = this.state.currentTime;
+        }
       }
     );
   };
 
-  // backward song
+  /**
+   * Rewinds the audio by one second, updating the state and the audio's current time.
+   * This function is called when the backward button is clicked.
+   */
   handleBackward = () => {
-    // state update
     this.setState(
       {
         seekBarValue:
@@ -163,18 +190,30 @@ export default class IpodContainer extends Component {
             : 0,
       },
       () => {
-        // audio element update
         const audio = this.audioRef.current;
-        audio.currentTime = this.state.currentTime;
+        if (audio) {
+          audio.currentTime = this.state.currentTime;
+        }
       }
     );
   };
 
-  // Handle end of audio playback
+  /**
+   * Handles the end of audio playback by setting the play state to false.
+   * This function is called when the audio playback ends.
+   */
   handleEnded = () => {
     this.setState({ isPlaying: false });
   };
 
+  /**
+   * Handles the selection of a menu item, updating the state with the new menu or sub-menu selection.
+   * It determines the direction of the rotation and updates the appropriate counter accordingly.
+   * @param {object} e - The event object containing rotation details.
+   * @param {array} newMenu - The new menu array to update the state with.
+   * @param {array} newSubMenu - The new sub-menu array to update the state with (if applicable).
+   * @param {boolean} isSubMenu - Flag indicating if the selection is in a sub-menu.
+   */
   handleSelectItem = (e, newMenu, newSubMenu, isSubMenu = false) => {
     if (parseInt(Math.abs(e.detail.angle) % 15) === 0) {
       if (e.detail.distanceFromLast >= 0) {
@@ -217,16 +256,20 @@ export default class IpodContainer extends Component {
     }
   };
 
+  /**
+   * Handles the rotation event, updating the menu or sub-menu selection based on the current state.
+   * If the sub-menu is visible, it updates the sub-menu selection; otherwise, it updates the main menu selection.
+   * @param {object} e - The event object containing rotation details.
+   */
   handleRotate = (e) => {
-    // if showMenu = false & showSubMenu = true
+    // If the main menu is hidden and the sub-menu is visible
     if (!this.state.showMenu && this.state.showSubMenu) {
-      // Use sub menu here
       const newMenu = this.state.menu;
       const newSelectedItem = newMenu.find((item) => item.isSelected);
       let newSubMenu = newSelectedItem.subMenu;
 
       newSubMenu = newSubMenu.map((item, index) => {
-        // changing counter here
+        // Updating the selection based on the current sub-menu counter
         return index === this.state.subMenuCounter
           ? { ...item, isSelected: true }
           : { ...item, isSelected: false };
@@ -237,10 +280,10 @@ export default class IpodContainer extends Component {
       return;
     }
 
-    // if showMenu = true
+    // If the main menu is visible
     let newMenu = this.state.menu;
     newMenu = newMenu.map((item, index) => {
-      // if item does not have subMenu
+      // Updating the selection based on the current menu counter
       return index === this.state.menuCounter
         ? { ...item, isSelected: true }
         : { ...item, isSelected: false };
@@ -249,33 +292,39 @@ export default class IpodContainer extends Component {
     this.handleSelectItem(e, newMenu);
   };
 
+  /**
+   * Component lifecycle method that binds the rotate event to the handleRotate function.
+   * This is called after the component is mounted into the DOM.
+   */
   componentDidMount = () => {
     const wheel = document.getElementById("wheel");
     zt.bind(wheel, "rotate", this.handleRotate);
   };
 
+  /**
+   * Handles the click event on the menu button.
+   * Toggles the visibility of the sub-menu or the item component based on the current state.
+   */
   handleMenuClick = () => {
-    // get the current selected item
+    // Get the currently selected item from the menu
     const itemToShow = this.state.menu.find((item) => item.isSelected);
-    // if the selected item has subMenu
+    // If the selected item has a sub-menu
     if (itemToShow?.subMenu) {
-      // if the subMenu is showing currently
+      // Toggle the visibility of the sub-menu and the main menu
       if (this.state.showSubMenu) {
-        // close subMenu and show mainMenu
         this.setState({
           showSubMenu: false,
           showMenu: true,
         });
       } else {
-        // close/open menu and show/hide selected item component
         this.setState({
           showMenu: !this.state.showMenu,
           showItemComponent: !this.state.showItemComponent,
         });
       }
     } else {
-      // if the selected item dows not have subMenu
-      // close/open menu and show/hide selected item component
+      // If the selected item does not have a sub-menu
+      // Toggle the visibility of the main menu and the item component
       this.setState({
         showMenu: !this.state.showMenu,
         showItemComponent: !this.state.showItemComponent,
@@ -283,13 +332,17 @@ export default class IpodContainer extends Component {
     }
   };
 
+  /**
+   * Handles the click event on the select button.
+   * Toggles the visibility of the menu, sub-menu, and item component based on the current state.
+   */
   handleSelectClick = () => {
     const { showMenu, showSubMenu } = this.state;
 
     if (showSubMenu) {
       this.setState({ showSubMenu: false, showItemComponent: true });
     } else if (showMenu) {
-      // is any menu item is selected?
+      // Check if any menu item is selected
       const itemToShow = this.state.menu.find((item) => item.isSelected);
 
       if (itemToShow?.subMenu) {
@@ -297,8 +350,6 @@ export default class IpodContainer extends Component {
       } else {
         this.setState({ showMenu: false, showItemComponent: true });
       }
-    } else {
-      // if player functionality is implemented, this part will be used
     }
   };
 

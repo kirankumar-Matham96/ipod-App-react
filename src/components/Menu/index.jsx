@@ -2,6 +2,11 @@ import { MenuItem } from "../MenuItem";
 import menuStyles from "./index.module.css";
 import ItemComponent from "../ItemComponent";
 
+/**
+ * Component that renders the menu, sub menu and main screen with conditions.
+ * @param {Object} props from parent(IpodContainer) 
+ * @returns JSX - main screen component
+ */
 export const Menu = (props) => {
   const {
     subMenuCounter,
