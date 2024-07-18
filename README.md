@@ -1,6 +1,6 @@
 # IPod Simulator
 
-An Open API represents a polling system. You can add any question and option to the question. Also can vote the option.
+A simple IPOD simulator created with react, where you can interact with the UI. You can open the menu and select any option. With the sub menu, you can select the songs and play.
 
 ## Table of Contents
 
@@ -65,6 +65,16 @@ An Open API represents a polling system. You can add any question and option to 
 ## React ReadMe file
 
 - [ReadMe.md](https://github.com/facebook/create-react-app/blob/main/packages/cra-template/template/README.md)
+
+## Known Issues & Improvements
+
+- Issues:
+
+  - After opening the sub menu, when the wheel is rotated, the option in the sub menu will get selected. However, the UI is a step delayed and the current selected item will be the next item that will come after the current highlighted item in the menu.
+
+- Improvements:
+  - There is only one song in the "All Songs" option in the sub menu. Can be improved to add multiple songs.
+  - The songs should be fetched from an API instead hardcoding.
 
 ## Contributing
 
