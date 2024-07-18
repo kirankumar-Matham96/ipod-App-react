@@ -4,7 +4,6 @@ import { ItemComponent } from "../ItemComponent";
 
 export const Menu = (props) => {
   const selectedItem = props.menu.find((item) => item.isSelected);
-  console.log({ selectedItem });
   return (
     <div className={menuStyles["menu-container"]}>
       {props.showMenu && (
@@ -22,17 +21,10 @@ export const Menu = (props) => {
         </div>
       )}
 
-      {props.showItemComponent && (
-        <>
-          <ItemComponent text={selectedItem ? selectedItem.content : null} />
-        </>
-      )}
-
       {props.showSubMenu &&
         props.menu.map((item) => {
-          console.log(item);
           return item.isSelected ? (
-            <div className={menuStyles["menu"]}>
+            <div key={item.id} className={menuStyles["menu"]}>
               <div className={menuStyles["menu-heading"]}>
                 <h4>{item.content}</h4>
               </div>
@@ -46,6 +38,12 @@ export const Menu = (props) => {
             </div>
           ) : null;
         })}
+
+      {props.showItemComponent && (
+        <>
+          <ItemComponent selectedItem={selectedItem ? selectedItem : null} />
+        </>
+      )}
     </div>
   );
 };

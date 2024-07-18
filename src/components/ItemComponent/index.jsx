@@ -1,16 +1,33 @@
 import React from "react";
 import itemComponentStyles from "./index.module.css";
 export const ItemComponent = (props) => {
-  console.log("props in ItemComponent => ", props);
+  const { selectedItem } = props;
+
+  console.log({ selectedItem });
+
+  if (selectedItem?.subMenu) {
+    return (
+      <div
+        className={
+          selectedItem.subMenu.find((item) => item.isSelected).content
+            ? itemComponentStyles["item-component-container"]
+            : itemComponentStyles["default-container"]
+        }
+      >
+        <p>{selectedItem.subMenu.find((item) => item.isSelected).content}</p>
+      </div>
+    );
+  }
+
   return (
     <div
       className={
-        props.text
+        selectedItem?.content
           ? itemComponentStyles["item-component-container"]
           : itemComponentStyles["default-container"]
       }
     >
-      <p>{props?.text}</p>
+      <p>{selectedItem?.content}</p>
     </div>
   );
 };

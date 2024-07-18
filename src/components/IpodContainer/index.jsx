@@ -31,35 +31,106 @@ export default class IpodContainer extends Component {
     };
   }
 
-  handleSelectItem = (e, newMenu) => {
-    if (parseInt(e.detail.angle % 15) === 0) {
+  handleSelectItem = (e, newMenu, newSubMenu, isSubMenu = false) => {
+    if (parseInt(Math.abs(e.detail.angle) % 15) === 0) {
       if (e.detail.distanceFromLast >= 0) {
-        this.setState({
-          menu: newMenu,
-          menuCounter:
-            this.state.menuCounter >= newMenu.length - 1
-              ? 0
-              : this.state.menuCounter + 1,
-        });
+        if (isSubMenu) {
+          this.setState(
+            {
+              menu: newMenu,
+              subMenuCounter:
+                this.state.subMenuCounter >= newSubMenu.length - 1
+                  ? 0
+                  : this.state.subMenuCounter + 1,
+            },
+            () => {
+              console.log(
+                "subMenuCounter after state update => ",
+                this.state.subMenuCounter
+              );
+            }
+          );
+        } else {
+          this.setState(
+            {
+              menu: newMenu,
+              menuCounter:
+                this.state.menuCounter >= newMenu.length - 1
+                  ? 0
+                  : this.state.menuCounter + 1,
+            },
+            () => {
+              console.log(
+                "MenuCounter after state update => ",
+                this.state.menuCounter
+              );
+            }
+          );
+        }
       } else {
-        this.setState({
-          menu: newMenu,
-          menuCounter:
-            this.state.menuCounter <= 0
-              ? newMenu.length - 1
-              : this.state.menuCounter - 1,
-        });
+        if (isSubMenu) {
+          this.setState(
+            {
+              menu: newMenu,
+              subMenuCounter:
+                this.state.subMenuCounter <= 0
+                  ? newSubMenu.length - 1
+                  : this.state.subMenuCounter - 1,
+            },
+            () => {
+              console.log(
+                "subMenuCounter after state update => ",
+                this.state.subMenuCounter
+              );
+            }
+          );
+        } else {
+          this.setState(
+            {
+              menu: newMenu,
+              menuCounter:
+                this.state.menuCounter <= 0
+                  ? newMenu.length - 1
+                  : this.state.menuCounter - 1,
+            },
+            () => {
+              console.log(
+                "MenuCounter after state update => ",
+                this.state.menuCounter
+              );
+            }
+          );
+        }
       }
     }
   };
 
   handleRotate = (e) => {
-    const selectedItemSubMenu = this.state.menu.find(
-      (item) => item.isSelected
-    )?.subMenu;
-    let newMenu = this.state.menu;
+    // if showMenu = false & showSubMenu = true
+    if (!this.state.showMenu && this.state.showSubMenu) {
+      // Use sub menu here
+      const newMenu = this.state.menu;
+      const newSelectedItem = newMenu.find((item) => item.isSelected);
+      let newSubMenu = newSelectedItem.subMenu;
 
+      newSubMenu = newSubMenu.map((item, index) => {
+        console.log("index => ", index);
+        console.log("subMenuCounter => ", this.state.subMenuCounter);
+        // changing counter here
+        return index === this.state.subMenuCounter
+          ? { ...item, isSelected: true }
+          : { ...item, isSelected: false };
+      });
+
+      newMenu.find((item) => item.isSelected).subMenu = newSubMenu;
+      this.handleSelectItem(e, newMenu, newSubMenu, true);
+      return;
+    }
+
+    // if showMenu = true
+    let newMenu = this.state.menu;
     newMenu = newMenu.map((item, index) => {
+      // if item does not have subMenu
       return index === this.state.menuCounter
         ? { ...item, isSelected: true }
         : { ...item, isSelected: false };
@@ -103,24 +174,21 @@ export default class IpodContainer extends Component {
   };
 
   handleSelectClick = () => {
-    // check if menu is open?
-    if (this.state.showMenu) {
+    const { showMenu, showSubMenu } = this.state;
+
+    if (showSubMenu) {
+      this.setState({ showSubMenu: false, showItemComponent: true });
+    } else if (showMenu) {
       // is any menu item is selected?
       const itemToShow = this.state.menu.find((item) => item.isSelected);
-      // if menu item is not selected ? close menu : close menu and show item component;
-      if (itemToShow) {
-        if (itemToShow.subMenu) {
-          this.setState({
-            showMenu: !this.state.showMenu,
-            showSubMenu: !this.state.showSubMenu,
-          });
-        } else {
-          this.setState({
-            showMenu: !this.state.showMenu,
-            showItemComponent: !this.state.showItemComponent,
-          });
-        }
+
+      if (itemToShow?.subMenu) {
+        this.setState({ showMenu: false, showSubMenu: true });
+      } else {
+        this.setState({ showMenu: false, showItemComponent: true });
       }
+    } else {
+      // if player functionality is implemented, this part will be used
     }
   };
 
