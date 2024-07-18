@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import { Menu } from "../Menu";
 import { ControlWheel } from "../ControlWheel";
 import ipodStyles from "./index.module.css";
@@ -76,8 +76,104 @@ export default class IpodContainer extends Component {
       showMenu: false,
       showSubMenu: false,
       showItemComponent: true,
+      isPlaying: false,
+      currentTime: 0,
+      duration: 0,
+      seekBarValue: 0,
     };
+    this.audioRef = React.createRef();
   }
+
+  // Format time function (minutes:seconds)
+  formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
+
+  // Play/Pause toggle function
+  togglePlayPause = () => {
+    const audio = this.audioRef.current;
+    if (this.state.isPlaying) {
+      audio?.pause();
+    } else {
+      audio?.play();
+    }
+    this.setState({ isPlaying: !this.state.isPlaying });
+  };
+
+  // Update current time and seek bar value
+  updateTime = () => {
+    const audio = this.audioRef.current;
+    this.setState({
+      currentTime: audio.currentTime,
+      seekBarValue: audio.currentTime,
+    });
+  };
+
+  // Update duration once loaded metadata
+  handleLoadedMetadata = () => {
+    const audio = this.audioRef.current;
+    this.setState({ duration: audio.duration });
+  };
+
+  // Seek bar change handler
+  handleSeekBarChange = (e) => {
+    const newValue = e.target.value;
+    this.audioRef.current.currentTime = newValue;
+    this.setState({ seekBarValue: newValue });
+  };
+
+  // forward song
+  handleForward = () => {
+    // state update
+    this.setState(
+      {
+        seekBarValue:
+          this.state.currentTime < this.state.duration &&
+          this.state.seekBarValue + 1 < this.state.duration
+            ? this.state.seekBarValue + 1
+            : this.state.duration,
+        currentTime:
+          this.state.currentTime < this.state.duration &&
+          this.state.seekBarValue + 1 < this.state.duration
+            ? this.state.currentTime + 1
+            : this.state.duration,
+      },
+      () => {
+        // audio element update
+        const audio = this.audioRef.current;
+        audio.currentTime = this.state.currentTime;
+      }
+    );
+  };
+
+  // backward song
+  handleBackward = () => {
+    // state update
+    this.setState(
+      {
+        seekBarValue:
+          this.state.currentTime > 0 && this.state.seekBarValue - 1 > 0
+            ? this.state.seekBarValue - 1
+            : 0,
+        currentTime:
+          this.state.currentTime > 0 && this.state.seekBarValue - 1 > 0
+            ? this.state.currentTime - 1
+            : 0,
+      },
+      () => {
+        // audio element update
+        const audio = this.audioRef.current;
+        audio.currentTime = this.state.currentTime;
+      }
+    );
+  };
+
+  // Handle end of audio playback
+  handleEnded = () => {
+    this.setState({ isPlaying: false });
+  };
 
   handleSelectItem = (e, newMenu, newSubMenu, isSubMenu = false) => {
     if (parseInt(Math.abs(e.detail.angle) % 15) === 0) {
@@ -207,19 +303,44 @@ export default class IpodContainer extends Component {
   };
 
   render() {
-    const { menu } = this.state;
+    const {
+      menu,
+      duration,
+      currentTime,
+      isPlaying,
+      showMenu,
+      showItemComponent,
+      showSubMenu,
+      subMenuCounter,
+      seekBarValue,
+    } = this.state;
+
     return (
       <div className={ipodStyles["ipod-container"]}>
         <Menu
           menu={menu}
-          showMenu={this.state.showMenu}
-          showItemComponent={this.state.showItemComponent}
-          showSubMenu={this.state.showSubMenu}
-          subMenuCounter={this.state.subMenuCounter}
+          showMenu={showMenu}
+          showItemComponent={showItemComponent}
+          showSubMenu={showSubMenu}
+          subMenuCounter={subMenuCounter}
+          formatTime={this.formatTime}
+          handleSeekBarChange={this.handleSeekBarChange}
+          togglePlayPause={this.togglePlayPause}
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
+          seekBarValue={seekBarValue}
+          audioRef={this.audioRef}
+          updateTime={this.updateTime}
+          handleLoadedMetadata={this.handleLoadedMetadata}
+          handleEnded={this.handleEnded}
         />
         <ControlWheel
           handleMenuClick={this.handleMenuClick}
           handleSelectClick={this.handleSelectClick}
+          togglePlayPause={this.togglePlayPause}
+          handleForward={this.handleForward}
+          handleBackward={this.handleBackward}
         />
       </div>
     );

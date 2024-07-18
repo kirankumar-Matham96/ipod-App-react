@@ -1,81 +1,35 @@
 import React, { Component } from "react";
 import itemComponentStyles from "./index.module.css";
-import { ButtonComponent } from "../Button";
 
 export default class ItemComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isPlaying: false,
-      currentTime: 0,
-      duration: 0,
-      seekBarValue: 0,
-    };
-    this.audioRef = React.createRef();
-  }
-
-  // Format time function (minutes:seconds)
-  formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  componentDidMount = () => {
+    const { updateTime, handleLoadedMetadata, handleEnded, audioRef } =
+      this.props;
+    const audio = audioRef.current;
+    audio?.addEventListener("timeupdate", updateTime);
+    audio?.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio?.addEventListener("ended", handleEnded);
   };
 
-  // Play/Pause toggle function
-  togglePlayPause = () => {
-    const audio = this.audioRef.current;
-    if (this.state.isPlaying) {
-      audio.pause();
-    } else {
-      audio.play();
-    }
-    this.setState({ isPlaying: !this.state.isPlaying });
+  componentWillUnmount = () => {
+    const { updateTime, handleLoadedMetadata, handleEnded, audioRef } =
+      this.props;
+    const audio = audioRef.current;
+    audio?.removeEventListener("timeupdate", updateTime);
+    audio?.removeEventListener("loadedmetadata", handleLoadedMetadata);
+    audio?.removeEventListener("ended", handleEnded);
   };
-
-  // Update current time and seek bar value
-  updateTime = () => {
-    const audio = this.audioRef.current;
-    this.setState({
-      currentTime: audio.currentTime,
-      seekBarValue: audio.currentTime,
-    });
-  };
-
-  // Update duration once loaded metadata
-  handleLoadedMetadata = () => {
-    const audio = this.audioRef.current;
-    this.setState({ duration: audio.duration });
-  };
-
-  // Seek bar change handler
-  handleSeekBarChange = (e) => {
-    const newValue = e.target.value;
-    this.audioRef.current.currentTime = newValue;
-    this.setState({ seekBarValue: newValue });
-  };
-
-  // Handle end of audio playback
-  handleEnded = () => {
-    this.setState({ isPlaying: false });
-  };
-
-  componentDidMount() {
-    const audio = this.audioRef.current;
-    audio?.addEventListener("timeupdate", this.updateTime);
-    audio?.addEventListener("loadedmetadata", this.handleLoadedMetadata);
-    audio?.addEventListener("ended", this.handleEnded);
-  }
-
-  componentWillUnmount() {
-    const audio = this.audioRef.current;
-    audio?.removeEventListener("timeupdate", this.updateTime);
-    audio?.removeEventListener("loadedmetadata", this.handleLoadedMetadata);
-    audio?.removeEventListener("ended", this.handleEnded);
-  }
-
   render() {
-    const { isPlaying, currentTime, duration, seekBarValue } = this.state;
-    const { selectedItem, subMenuCounter } = this.props;
+    const {
+      selectedItem,
+      subMenuCounter,
+      currentTime,
+      duration,
+      seekBarValue,
+      audioRef,
+      formatTime,
+      handleSeekBarChange,
+    } = this.props;
 
     if (selectedItem?.subMenu) {
       return (
@@ -88,60 +42,30 @@ export default class ItemComponent extends Component {
         >
           {selectedItem?.subMenu[subMenuCounter].content === "All Songs" && (
             <>
-              <div
-                style={{
-                  alignSelf: "stretch",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  padding: "40px 20px 30px",
-                }}
-              >
+              <div className={itemComponentStyles["all-songs-container"]}>
                 <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
+                  className={itemComponentStyles["all-songs-upper-container"]}
                 >
                   <img
                     src="https://static.gettyimages.com/display-sets/creative-landing/images/GettyImages-1907862843.jpg"
                     alt="song"
-                    style={{
-                      width: "45%",
-                    }}
                   />
                   <div
                     className={
                       itemComponentStyles["item-component-text-container"]
                     }
                   >
-                    <p
-                      style={{
-                        fontSize: "1.2rem",
-                        fontWeight: "700",
-                        margin: "0",
-                        padding: "0",
-                      }}
-                    >
+                    <span className={itemComponentStyles["song-title"]}>
                       {selectedItem?.subMenu[subMenuCounter].song.title}
-                    </p>
-                    <p
-                      style={{
-                        fontSize: "0.9rem",
-                        fontWeight: "500",
-                        margin: "0",
-                        padding: "0",
-                      }}
-                    >
+                    </span>
+                    <span className={itemComponentStyles["song-artist"]}>
                       {selectedItem?.subMenu[subMenuCounter].song.artist}
-                    </p>
+                    </span>
                   </div>
                 </div>
 
                 <div>
-                  <audio id="custom-audio" ref={this.audioRef}>
+                  <audio id="custom-audio" ref={audioRef}>
                     <source
                       src="https://samplelib.com/lib/preview/mp3/sample-3s.mp3"
                       type="audio/ogg"
@@ -163,23 +87,8 @@ export default class ItemComponent extends Component {
                       min={0}
                       max={duration}
                       value={seekBarValue}
-                      onChange={this.handleSeekBarChange}
+                      onChange={handleSeekBarChange}
                       step="0.0001"
-                    />
-                    <ButtonComponent
-                      onClick={this.togglePlayPause}
-                      color="blue"
-                      width="30px"
-                      height="30px"
-                      radius="20rem"
-                      bg={"transparent"}
-                      text={
-                        isPlaying ? (
-                          <i className="fa-solid fa-pause"></i>
-                        ) : (
-                          <i className="fa-solid fa-play"></i>
-                        )
-                      }
                     />
                   </div>
                   <div
@@ -196,7 +105,7 @@ export default class ItemComponent extends Component {
                         padding: "0",
                       }}
                     >
-                      {this.formatTime(this.state.currentTime)}
+                      {formatTime(currentTime)}
                     </p>
                     <p
                       style={{
@@ -205,7 +114,7 @@ export default class ItemComponent extends Component {
                         padding: "0",
                       }}
                     >
-                      {this.formatTime(this.state.duration)}
+                      {formatTime(duration)}
                     </p>
                   </div>
                 </div>
@@ -230,12 +139,12 @@ export default class ItemComponent extends Component {
         }
       >
         {(selectedItem?.content === "Games" && (
-          <span>
+          <span className={itemComponentStyles["icon"]}>
             <i className="fa-solid fa-dice"></i>
           </span>
         )) ||
           (selectedItem?.content === "Settings" && (
-            <span>
+            <span className={itemComponentStyles["icon"]}>
               <i className="fa-solid fa-gear"></i>
             </span>
           ))}

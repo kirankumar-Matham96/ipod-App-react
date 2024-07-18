@@ -3,6 +3,19 @@ import menuStyles from "./index.module.css";
 import ItemComponent from "../ItemComponent";
 
 export const Menu = (props) => {
+  const {
+    subMenuCounter,
+    formatTime,
+    handleSeekBarChange,
+    togglePlayPause,
+    isPlaying,
+    currentTime,
+    updateTime,
+    handleLoadedMetadata,
+    duration,
+    seekBarValue,
+    audioRef,
+  } = props;
   const selectedItem = props.menu.find((item) => item.isSelected);
   return (
     <div className={menuStyles["menu-container"]}>
@@ -43,7 +56,17 @@ export const Menu = (props) => {
         <>
           <ItemComponent
             selectedItem={selectedItem ? selectedItem : null}
-            subMenuCounter={props.subMenuCounter}
+            subMenuCounter={subMenuCounter}
+            formatTime={formatTime}
+            updateTime={updateTime}
+            handleLoadedMetadata={handleLoadedMetadata}
+            handleSeekBarChange={handleSeekBarChange}
+            togglePlayPause={togglePlayPause}
+            isPlaying={isPlaying}
+            currentTime={currentTime}
+            duration={duration}
+            seekBarValue={seekBarValue}
+            audioRef={audioRef}
           />
         </>
       )}
